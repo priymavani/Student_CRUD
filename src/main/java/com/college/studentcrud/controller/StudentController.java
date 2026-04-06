@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 import java.util.Optional; 
@@ -75,4 +79,58 @@ public class StudentController {
         Long count = studentService.getTotalCount();
         return ResponseEntity.ok("Total Student in Database: " + count);
     }
+
+    @PostMapping
+    public ResponseEntity<Student> addStudent(@RequestBody Student student){
+
+        Student saved = studentService.addStudent(student);
+        return ResponseEntity.status(201).body(saved);
+
+
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Student> updateStudent(@PathVariable int id, @RequestBody Student updateData){
+       
+        Optional<Student> result = studentService.updateStudent(id, updateData);
+
+        if(result.isPresent()){
+            return ResponseEntity.ok(result.get());
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletedStudent(@PathVariable int id){
+
+        boolean deleted = studentService.deleteStudent(id);
+
+        if(deleted){
+            return ResponseEntity.ok("Student With Id " + id + " deleted");
+
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
 }
+
+
+/*
+🔹 1. What is ResponseEntity?
+
+ResponseEntity is a class in Spring that represents the entire HTTP response, including:
+
+Status code (200, 404, 500, etc.)
+Headers
+Body
+🔹 2. What does notFound() do?
+ResponseEntity.notFound()
+It creates a builder for a response with status 404 (Not Found)
+🔹 3. What does build() do?
+.build()
+Finalizes the response
+Since no body is provided, it returns an empty response
+
+*/
